@@ -120,6 +120,7 @@ function M.highlight(buf, first, last, _event)
 
       local hl_fg = "TodoFg" .. kw
       local hl_bg = "TodoBg" .. kw
+      local hl_both = "TodoBoth" .. kw
 
       local hl = Config.options.highlight
 
@@ -128,6 +129,8 @@ function M.highlight(buf, first, last, _event)
         add_highlight(buf, Config.ns, hl_fg, lnum, 0, start)
       elseif hl.before == "bg" then
         add_highlight(buf, Config.ns, hl_bg, lnum, 0, start)
+      elseif hl.before == "both" then
+        add_highlight(buf, Config.ns, hl_both, lnum, 0, start)
       end
 
       -- tag highlights
@@ -137,6 +140,8 @@ function M.highlight(buf, first, last, _event)
         add_highlight(buf, Config.ns, hl_bg, lnum, start, finish)
       elseif hl.keyword == "fg" then
         add_highlight(buf, Config.ns, hl_fg, lnum, start, finish)
+      elseif hl.keyword == "both" then
+        add_highlight(buf, Config.ns, hl_both, lnum, start, finish)
       end
 
       -- after highlights
@@ -144,6 +149,8 @@ function M.highlight(buf, first, last, _event)
         add_highlight(buf, Config.ns, hl_fg, lnum, finish, #line)
       elseif hl.after == "bg" then
         add_highlight(buf, Config.ns, hl_bg, lnum, finish, #line)
+      elseif hl.after == "both" then
+        add_highlight(buf, Config.ns, hl_both, lnum, finish, #line)
       end
 
       -- signs

@@ -88,11 +88,14 @@ Todo comes with the following defaults:
   -- * keyword: highlights of the keyword
   -- * after: highlights after the keyword (todo text)
   highlight = {
-    before = "", -- "fg" or "bg" or empty
-    keyword = "wide", -- "fg", "bg", "wide" or empty. (wide is the same as bg, but will also highlight surrounding characters)
-    after = "fg", -- "fg" or "bg" or empty
+    before = "", -- "fg" or "bg" or "both" or empty
+    keyword = "wide", -- "fg", "bg", "both", "wide" or empty.
+                      -- (wide is the same as bg, but will also highlight surrounding characters)
+    after = "fg", -- "fg" or "bg" or "both" or empty
+    -- pattern can be a string, or a table of regexes that will be checked
     pattern = [[.*<(KEYWORDS)\s*:]], -- pattern or table of patterns, used for highlightng (vim regex)
-    comments_only = true, -- uses treesitter to match keywords in comments only
+    -- pattern = { [[.*<(KEYWORDS)\s*:]], [[.*\@(KEYWORDS)\s*]] }, -- pattern used for highlightng (vim regex)
+    comments_only = true, -- this applies the pattern only inside comments using `commentstring` option
     max_line_len = 400, -- ignore lines longer than this
     exclude = {}, -- list of file types to exclude highlighting
   },

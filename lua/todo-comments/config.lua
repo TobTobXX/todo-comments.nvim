@@ -35,9 +35,10 @@ local defaults = {
   -- * keyword: highlights of the keyword
   -- * after: highlights after the keyword (todo text)
   highlight = {
-    before = "", -- "fg" or "bg" or empty
-    keyword = "wide", -- "fg", "bg", "wide" or empty. (wide is the same as bg, but will also highlight surrounding characters)
-    after = "fg", -- "fg" or "bg" or empty
+    before = "", -- "fg" or "bg" or "both" or empty
+    keyword = "wide", -- "fg", "bg", "both", "wide" or empty.
+                      -- (wide is the same as bg, but will also highlight surrounding characters)
+    after = "fg", -- "fg" or "bg" or "both" or empty
     -- pattern can be a string, or a table of regexes that will be checked
     pattern = [[.*<(KEYWORDS)\s*:]], -- pattern or table of patterns, used for highlightng (vim regex)
     -- pattern = { [[.*<(KEYWORDS)\s*:]], [[.*\@(KEYWORDS)\s*]] }, -- pattern used for highlightng (vim regex)
@@ -133,34 +134,40 @@ function M.colors()
 
   for kw, opts in pairs(M.options.keywords) do
     local kw_color = opts.color or "default"
-    local hex
+    local hex_fg
+    local hex_bg
 
     if kw_color:sub(1, 1) == "#" then
-      hex = kw_color
+      hex_fg = kw_color
+      hex_bg = kw_color
     else
       local colors = M.options.colors[kw_color]
       colors = type(colors) == "string" and { colors } or colors
 
       for _, color in pairs(colors) do
         if color:sub(1, 1) == "#" then
-          hex = color
+          hex_fg = color
+          hex_bg = color
           break
         end
         local c = Util.get_hl(color)
         if c and c.foreground then
-          hex = c.foreground
+          hex_fg = c.foreground
+          hex_bg = c.background or c.foreground
           break
         end
       end
     end
-    if not hex then
+    -- Checking one variable should suffice
+    if not hex_fg then
       error("Todo: no color for " .. kw)
     end
-    local fg = Util.is_dark(hex) and fg_light or fg_dark
+    local fg = Util.is_dark(hex_fg) and fg_light or fg_dark
 
-    vim.cmd("hi def TodoBg" .. kw .. " guibg=" .. hex .. " guifg=" .. fg .. " gui=bold")
-    vim.cmd("hi def TodoFg" .. kw .. " guibg=NONE guifg=" .. hex .. " gui=NONE")
-    vim.cmd("hi def TodoSign" .. kw .. " guibg=" .. sign_bg .. " guifg=" .. hex .. " gui=NONE")
+    vim.cmd("hi def TodoBg" .. kw .. " guibg=" .. hex_fg .. " guifg=" .. fg .. " gui=bold")
+    vim.cmd("hi def TodoFg" .. kw .. " guibg=NONE guifg=" .. hex_fg .. " gui=NONE")
+    vim.cmd("hi def TodoBoth" .. kw .. " guibg=" .. hex_bg .. " guifg=" .. hex_fg .. " gui=NONE")
+    vim.cmd("hi def TodoSign" .. kw .. " guibg=" .. sign_bg .. " guifg=" .. hex_fg .. " gui=NONE")
   end
 end
 
